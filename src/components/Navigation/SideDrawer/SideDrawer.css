@@ -1,0 +1,57 @@
+.SideDrawer {
+    position: fixed;
+    width: 270px;
+    max-width: 70%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    background-color:rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+    transition: transform 0.3s ease-out;
+}
+
+.SideDrawerHeader{
+    align-items: center;
+    color: white;
+    justify-content: center;
+    display: flex;
+    padding-left: 20px;
+}
+
+.SideDrawerNavigations{
+    padding: 20px 30px;
+}
+
+.SideDrawerCloseBtn{
+    width: 15px;
+    height: 15px;
+    border: 1px solid;
+    border-radius: 50%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: darkolivegreen;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+@media (min-width: 500px) {
+    .SideDrawer {
+        display: none;
+    }
+}
+
+.Open {
+    transform: translateX(0);
+}
+
+.Close {
+    transform: translateX(-100%);
+}
+
+.SideDrawer .Logo {
+    height: 11%;
+    margin-bottom: 32px;
+}

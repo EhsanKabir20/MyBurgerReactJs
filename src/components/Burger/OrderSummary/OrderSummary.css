@@ -1,0 +1,10 @@
+.OrderEntry{
+    padding: 5px 0;
+    text-align: left;  
+    margin-bottom: 10px;
+}
+
+.OrderEntry span{
+    width: 50%;
+    display: inline-block;
+}
