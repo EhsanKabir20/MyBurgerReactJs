@@ -3,6 +3,10 @@ import Burger from '../../components/Burger/Burger'
 import BurgerControls from '../../components/Burger/BurgerControls/BurgerControls'
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import Modal from "../../components/UI/Modal/Modal"
+import AxiosInstance from "../../AxiosInstance"
+import Auxc from "../../hoc/Auxc/Auxc"
+import Spinner from '../../components/UI/Spinner/Spinner'
+import NotificationPopups from "../../hoc/NotificationPopups/NotificationPopups"
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -13,23 +17,41 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component {
     state = {
-        ingredients: {
-            salad: 0,
-            cheese: 0,
-            meat: 0,
-            bacon: 0
-        },
+        ingredients: null,
         totalPrice: 3,
         isModalShow: false,
-        isPurchasable: false
+        isPurchasable: false,
+        isLoading: false,
+        notification: null
+    }
+    
+
+    componentDidMount= () => {
+        this.setState( { isLoading: true } );
+        AxiosInstance.get("/ingredients.json")
+            .then( response => {
+                this.setState( { isLoading: false, ingredients: response.data } );
+            })
+            .catch( error => {
+                this.setState({
+                    isLoading: false,
+                    notification: {
+                        type: 'error',
+                        message: 'Ingredients load failed!',
+                        title: 'Error',
+                        timeOut: 2000,
+                        callback: () => {},
+                        priority: true
+                    }
+                });
+            });
     }
 
     updatePurchaseState = (indgredients) => {
         let countOfIngredients = Object.keys(indgredients).map((ik)=>{
             return indgredients[ik] > 0; 
-        }).reduce((ac, cv, ci) => {
-            console.log(cv, ci);
-            return ac + cv;
+        }).reduce((acumulator, currentValue, currentIndex) => {
+            return acumulator + currentValue;
         }, 0);
         this.setState({
             isPurchasable: countOfIngredients > 0
@@ -75,32 +97,88 @@ class BurgerBuilder extends Component {
     }
 
     checkoutHandeler = () =>{
-        alert("checkout");
+        this.setState( { isLoading: true, isModalShow: false } );
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'Ehsan Kabir',
+                address: {
+                    street: 'Address line 1',
+                    postalCode: '7410',
+                    city: 'Dhaka',
+                    country: 'Bangaldesh'
+                },
+                email: 'ehsan@minasu.net'
+            },
+            deliveryMethod: 'fastest'
+        }
+        AxiosInstance.post( '/orders.json', order )
+            .then( response => {
+                this.setState({
+                    isLoading: false,
+                    notification: {
+                        type: 'success',
+                        message: 'Checkout Done!',
+                        title: 'Success',
+                        timeOut: 2000,
+                        callback: () => {},
+                        priority: true
+                    }
+                });
+            } )
+            .catch( error => {
+                this.setState({
+                    isLoading: false,
+                    notification: {
+                        type: 'error',
+                        message: 'Checkout failed!',
+                        title: 'Error',
+                        timeOut: 2000,
+                        callback: () => {},
+                        priority: true
+                    }
+                });
+            } );
     }
 
-    render(){
+    render(){        
+        let burger = this.state.isLoading ? <Spinner /> : null;
+        let orderSummary = null;
+        if(this.state.ingredients){
+            burger = (
+                <Auxc>
+                    <Burger ingredients={this.state.ingredients}></Burger>
+                    <BurgerControls 
+                        ingredients={this.state.ingredients} 
+                        removeIngridient={this.removeIngridientHandeler} 
+                        addIngridient={this.addIngridientHandeler} 
+                        totalPrice={this.state.totalPrice} 
+                        modalClosed={this.modalOpenHandeler}
+                        modalOpen={this.modalOpenHandeler}
+                        isPurchasable={this.state.isPurchasable}>                        
+                    </BurgerControls>  
+                </Auxc>
+            );
+            
+            orderSummary = (
+                <OrderSummary
+                    totalPrice={this.state.totalPrice}
+                    ingredients={this.state.ingredients}>                    
+                </OrderSummary>
+            );
+        }
         return (
             <div>
+                <NotificationPopups notification={this.state.notification}/>
                 <Modal isShowModal={this.state.isModalShow} 
                     modalClose={this.modalClosedHandeler} 
                     modalTitle={"Order Summary"}
                     modalAction={this.checkoutHandeler}
                     modalActionName={"Checkout"}>
-                    <OrderSummary
-                        totalPrice={this.state.totalPrice}
-                        ingredients={this.state.ingredients}>                    
-                    </OrderSummary>
+                    {orderSummary}
                 </Modal>
-                <Burger ingredients={this.state.ingredients}></Burger>
-                <BurgerControls 
-                    ingredients={this.state.ingredients} 
-                    removeIngridient={this.removeIngridientHandeler} 
-                    addIngridient={this.addIngridientHandeler} 
-                    totalPrice={this.state.totalPrice} 
-                    modalClosed={this.modalOpenHandeler}
-                    modalOpen={this.modalOpenHandeler}
-                    isPurchasable={this.state.isPurchasable}>                        
-                </BurgerControls>               
+                {burger}                 
             </div>
         );
     }

@@ -427,6 +427,10 @@ module.exports = function(webpackEnv) {
             // of CSS.
             // By default we support CSS Modules with the extension .module.css
             {
+              test: /(NotificationPopups.css|notifications.css)$/,
+              loader: "style-loader!css-loader"
+            },
+            {
               test: cssRegex,
               exclude: cssModuleRegex,
               use: getStyleLoaders({
