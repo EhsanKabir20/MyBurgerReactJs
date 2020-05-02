@@ -21,5 +21,6 @@
     border: 1px solid;
     display: inline-block;
     margin-right: 10px;
+    margin-bottom: 2px;
     text-transform: capitalize;
 }

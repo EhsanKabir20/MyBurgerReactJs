@@ -18,6 +18,7 @@
     background-color: #17a2b8;
     border-color: #17a2b8;
     cursor: pointer;
+    margin-right: 10px;
 }
 
 .Button:disabled{
@@ -44,4 +45,18 @@
 .Danger {
     background-color: #944317;
     border-color: #944317;
+}
+
+.Link {
+    font-weight: 400;
+    color: #007bff;
+    background-color: transparent;
+    border: none;
+}
+
+.Link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    background-color: transparent;
+    border-color: transparent;
 }

@@ -3,7 +3,7 @@ import classes from './OrderItem.css'
 
 const OrderItem = (props) => {
     let ingredients = Object.keys(props.orderItem.ingredients).map( ingredient => {
-        return <span className={classes.Ingredient}>{ingredient}: {props.orderItem.ingredients[ingredient]}</span>;
+        return <span key={ingredient} className={classes.Ingredient}>{ingredient}: {props.orderItem.ingredients[ingredient]}</span>;
     });
     return(
         <div className={classes.OrderItem}>

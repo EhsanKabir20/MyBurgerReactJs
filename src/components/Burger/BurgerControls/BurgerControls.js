@@ -12,7 +12,7 @@ const burgerControls = (props) => {
         <div className={classes.BuildControls}>
             <div>Total Price: <strong>{props.totalPrice}</strong></div>
             {burgerControls}
-            <Button btnClicked={props.modalOpen} isPurchasable={props.isPurchasable} canDisabled={true}>Order Now</Button>
+            <Button btnClicked={props.modalOpen} isDisabled={!props.isPurchasable}>Order Now</Button>
         </div>
     );
 }
