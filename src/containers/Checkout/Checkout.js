@@ -1,15 +1,13 @@
 import React, {Component} from 'react'
-import AxiosInstance from '../../AxiosInstance'
-import NotificationPopups from '../../hoc/NotificationPopups/NotificationPopups'
 import CheckoutSummary from '../../containers/Checkout/CheckoutSummary/CheckoutSummary'
 import Spinner from '../../components/UI/Spinner/Spinner'
+import ContactForm from '../Checkout/ContactForm/ContactForm'
+import {Route} from 'react-router-dom'
 
 class Checkout extends Component {
 
     state={
         ingredients:[],
-        isLoading: false,
-        notification: null,
         totalPrice: 0
     }
 
@@ -31,65 +29,31 @@ class Checkout extends Component {
         this.props.history.goBack();
     }
 
-    checkoutHandeler = () =>{
-        this.setState( { isLoading: true } );
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Ehsan Kabir',
-                address: {
-                    street: 'Address line 1',
-                    postalCode: '7410',
-                    city: 'Dhaka',
-                    country: 'Bangaldesh'
-                },
-                email: 'ehsan@minasu.net'
-            },
-            deliveryMethod: 'fastest'
-        }
-        AxiosInstance.post( '/orders.json', order )
-            .then( response => {
-                this.setState({
-                    isLoading: false,
-                    notification: {
-                        type: 'success',
-                        message: 'Checkout Done!',
-                        title: 'Success',
-                        timeOut: 2000,
-                        callback: () => {},
-                        priority: true
-                    }
-                });
-            } )
-            .catch( error => {
-                this.setState({
-                    isLoading: false,
-                    notification: {
-                        type: 'error',
-                        message: 'Checkout failed!',
-                        title: 'Error',
-                        timeOut: 2000,
-                        callback: () => {},
-                        priority: true
-                    }
-                });
-            } );
+    checkoutContinuedHandler = () => {
+        this.props.history.replace( '/checkout/contact-form' );
     }
 
     render(){
-        let contentSection = (<CheckoutSummary 
-            ingredients={this.state.ingredients}
-            goToBurgerBuilderPage={this.goToBurgerBuilderPageHandeler}
-            checkout={this.checkoutHandeler}
-        />);
+        let contentSection = (
+            <CheckoutSummary 
+                ingredients={this.state.ingredients}
+                goToBurgerBuilderPage={this.goToBurgerBuilderPageHandeler}
+                checkout={this.checkoutContinuedHandler}/>
+        );
         if(this.state.isLoading){
             contentSection = <Spinner/>;
         }
         return (
             <div>
-                <NotificationPopups notification={this.state.notification}/>
                 {contentSection}
+                <Route 
+                    path={this.props.match.path + '/contact-form'} 
+                    component={
+                        () => <ContactForm 
+                            totalPrice={this.state.totalPrice} 
+                            ingredients={this.state.ingredients} 
+                            goToOrdersPage={() => {this.props.history.push('/Orders')}}/>
+                        }/>
             </div>
         )
     }   

@@ -8,8 +8,9 @@ const OrderItem = (props) => {
     return(
         <div className={classes.OrderItem}>
             <div className={classes.Customer}>{props.orderItem.customer}</div>
+            <div className={classes.CustomerAddress}>{props.orderItem.email}</div>
             <div className={classes.CustomerAddress}>{props.orderItem.address}</div>
-            <div>
+            <div className={classes.IngredientContainer}>
                 Burger Ingredients: { ingredients }
             </div>
             <div style={{"textTransform": "capitalize"}}>Delivery Method: {props.orderItem.deliveryMethod}</div>

@@ -18,12 +18,13 @@ class Orders extends Component {
                 let orders = [];
                 for (const orderId in response.data) {
                     const orderItem = response.data[orderId];
-                    const address = Object.values(orderItem.customer.address).reverse().join(", ");
+                    const address = orderItem.customer.address;
                     orders.push({
                         id: orderId,
                         ingredients: orderItem.ingredients,
                         customer: orderItem.customer.name,
                         address: address,
+                        email: orderItem.customer.email,
                         deliveryMethod: orderItem.deliveryMethod
                     });
                 }    
